@@ -47,12 +47,11 @@ public sealed class TrayIconService : IDisposable
     {
         if (_mainWindow.IsVisible)
         {
-            _mainWindow.Hide();
+            _mainWindow.HideByUser();
         }
         else
         {
-            _mainWindow.Show();
-            _mainWindow.Activate();
+            _mainWindow.ShowQuietly();
         }
     }
 

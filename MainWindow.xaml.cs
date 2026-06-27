@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Runtime.InteropServices;
 using System.Windows.Threading;
+using Microsoft.Win32;
 using QuietBar.Models;
 using QuietBar.Services;
 
@@ -16,8 +17,10 @@ public partial class MainWindow : Window
     private readonly TaskbarPositionService _taskbarPositionService = new();
     private readonly DispatcherTimer _refreshTimer = new();
     private readonly DispatcherTimer _collapseTimer = new();
+    private readonly DispatcherTimer _visibilityTimer = new();
     private AppSettings _settings;
     private bool _isExpanded;
+    private bool _isUserHidden;
 
     public MainWindow(SettingsService settingsService, AppSettings settings)
     {
@@ -33,18 +36,26 @@ public partial class MainWindow : Window
             _collapseTimer.Stop();
             SetExpanded(false);
         };
+        _visibilityTimer.Interval = TimeSpan.FromSeconds(3);
+        _visibilityTimer.Tick += (_, _) => RestoreQuietVisibility();
 
         Loaded += (_, _) =>
         {
             ApplySettings(_settings);
             RefreshHardwareSnapshot();
             _refreshTimer.Start();
+            _visibilityTimer.Start();
+            SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
+            SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;
         };
 
         Closed += (_, _) =>
         {
+            SystemEvents.DisplaySettingsChanged -= SystemEvents_DisplaySettingsChanged;
+            SystemEvents.UserPreferenceChanged -= SystemEvents_UserPreferenceChanged;
             _refreshTimer.Stop();
             _collapseTimer.Stop();
+            _visibilityTimer.Stop();
             _hardwareMonitorService.Dispose();
         };
     }
@@ -52,6 +63,19 @@ public partial class MainWindow : Window
     public void ReloadSettings()
     {
         ApplySettings(_settingsService.Load());
+    }
+
+    public void ShowQuietly()
+    {
+        _isUserHidden = false;
+        Show();
+        RestoreQuietVisibility();
+    }
+
+    public void HideByUser()
+    {
+        _isUserHidden = true;
+        Hide();
     }
 
     private void ApplySettings(AppSettings settings)
@@ -100,6 +124,16 @@ public partial class MainWindow : Window
         _collapseTimer.Start();
     }
 
+    private void SystemEvents_DisplaySettingsChanged(object? sender, EventArgs e)
+    {
+        Dispatcher.BeginInvoke(RestoreQuietVisibility, DispatcherPriority.ApplicationIdle);
+    }
+
+    private void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
+    {
+        Dispatcher.BeginInvoke(RestoreQuietVisibility, DispatcherPriority.ApplicationIdle);
+    }
+
     private void SetExpanded(bool expanded)
     {
         _isExpanded = expanded;
@@ -114,6 +148,29 @@ public partial class MainWindow : Window
         }, DispatcherPriority.ApplicationIdle);
     }
 
+    private void RestoreQuietVisibility()
+    {
+        if (_isUserHidden)
+        {
+            return;
+        }
+
+        if (!IsVisible)
+        {
+            Show();
+        }
+
+        if (WindowState != WindowState.Normal)
+        {
+            WindowState = WindowState.Normal;
+        }
+
+        Width = _isExpanded ? ExpandedWidth : CollapsedWidth;
+        Topmost = _settings.AlwaysOnTop;
+        _taskbarPositionService.PlaceWindow(this, _settings.Position);
+        EnsureTopmostWithoutActivation();
+    }
+
     private static string FormatPercent(float? value)
     {
         return value.HasValue ? $"{Math.Round(value.Value):0}%" : "N/A";
@@ -126,6 +183,11 @@ public partial class MainWindow : Window
 
     private void EnsureTopmostWithoutActivation()
     {
+        if (!_settings.AlwaysOnTop)
+        {
+            return;
+        }
+
         var handle = new WindowInteropHelper(this).Handle;
         if (handle == IntPtr.Zero)
         {

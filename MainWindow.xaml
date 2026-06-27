@@ -4,14 +4,15 @@
         Title="QuietBar"
         Width="164"
         Height="34"
-        MinWidth="164"
+        MinWidth="132"
         MinHeight="34"
         WindowStyle="None"
         ResizeMode="NoResize"
         AllowsTransparency="True"
         Background="Transparent"
         ShowInTaskbar="False"
-        SizeToContent="WidthAndHeight"
+        ShowActivated="False"
+        SizeToContent="Height"
         MouseEnter="Window_MouseEnter"
         MouseLeave="Window_MouseLeave">
   <Window.Resources>
@@ -31,7 +32,7 @@
   </Window.Resources>
   <Border x:Name="RootChrome"
           CornerRadius="8"
-          Padding="10,6"
+          Padding="10,5"
           Background="#CC111418"
           BorderBrush="#33FFFFFF"
           BorderThickness="1"
@@ -42,26 +43,37 @@
                         Opacity="0.28"
                         Color="#000000" />
     </Border.Effect>
-    <StackPanel Orientation="Vertical">
-      <StackPanel Orientation="Horizontal">
-        <TextBlock x:Name="CollapsedCpuText"
-                   Foreground="#F3F7FA"
-                   FontWeight="SemiBold" />
-        <TextBlock Text="  "
-                   Foreground="#F3F7FA" />
-        <TextBlock x:Name="CollapsedGpuText"
-                   Foreground="#F3F7FA"
-                   FontWeight="SemiBold" />
-      </StackPanel>
+    <StackPanel Orientation="Horizontal"
+                VerticalAlignment="Center">
+      <TextBlock x:Name="CollapsedCpuText"
+                 Foreground="#F3F7FA"
+                 FontWeight="SemiBold"
+                 TextWrapping="NoWrap" />
+      <TextBlock Text="  "
+                 Foreground="#F3F7FA" />
+      <TextBlock x:Name="CollapsedGpuText"
+                 Foreground="#F3F7FA"
+                 FontWeight="SemiBold"
+                 TextWrapping="NoWrap" />
       <StackPanel x:Name="ExpandedPanel"
-                  Margin="0,5,0,0"
+                  Orientation="Horizontal"
+                  Margin="10,0,0,0"
                   Visibility="Collapsed">
+        <TextBlock Text="RAM "
+                   Foreground="#F3F7FA" />
         <TextBlock x:Name="RamText"
+                   Foreground="#F3F7FA"
+                   TextWrapping="NoWrap" />
+        <TextBlock Text="  VRAM "
                    Foreground="#F3F7FA" />
         <TextBlock x:Name="VramText"
+                   Foreground="#F3F7FA"
+                   TextWrapping="NoWrap" />
+        <TextBlock Text="  TEMP "
                    Foreground="#F3F7FA" />
         <TextBlock x:Name="TemperatureText"
-                   Foreground="#F3F7FA" />
+                   Foreground="#F3F7FA"
+                   TextWrapping="NoWrap" />
       </StackPanel>
     </StackPanel>
   </Border>

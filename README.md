@@ -7,8 +7,8 @@ The first version is intentionally simple: it displays CPU usage, memory usage, 
 ## Features
 
 - Borderless transparent always-on-top WPF window.
-- Collapsed mode: low opacity and only CPU/GPU summary.
-- Hover mode: full opacity and expanded CPU/RAM/GPU/VRAM/temperature details.
+- Collapsed mode: low opacity and only CPU/GPU summary in the taskbar area.
+- Hover mode: full opacity and horizontal CPU/RAM/GPU/VRAM/temperature details.
 - Auto-collapses 2 seconds after the mouse leaves.
 - System tray icon with show/hide, reload config, startup toggle, and exit.
 - Read-only hardware monitoring through `LibreHardwareMonitorLib`.
@@ -28,13 +28,13 @@ dotnet build
 dotnet run --project .\QuietBar.csproj
 ```
 
-For a release build:
+For a portable release build that does not require the user to install .NET:
 
 ```powershell
-dotnet publish .\QuietBar.csproj -c Release -r win-x64 --self-contained false
+dotnet publish .\QuietBar.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true
 ```
 
-Run the generated `QuietBar.exe` from the publish folder.
+Run the generated `QuietBar.exe` from the publish folder. The release build is self-contained so ordinary Windows users do not need to install the .NET Desktop Runtime separately.
 
 ## Configuration
 
@@ -65,7 +65,7 @@ Use the tray menu item `重新加载配置` to reload the file without restartin
 ## Known Limitations
 
 - GPU, VRAM, and temperature sensor availability depends on the GPU vendor, driver, and whether LibreHardwareMonitor can read the sensor on that machine.
-- The first version only supports the primary screen bottom-left placement.
+- The first version only supports the primary screen bottom-left taskbar placement.
 - No graphs, history, alerts, cleanup, optimization, or system modification features are included.
 - Some hardware sensors may require elevated permissions on certain devices, but QuietBar is designed to degrade to `N/A`.
 

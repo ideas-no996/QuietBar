@@ -9,7 +9,7 @@ The first version is intentionally simple: it displays CPU usage, memory usage, 
 - Borderless transparent always-on-top WPF window.
 - Collapsed mode: low opacity and only CPU/GPU summary in the taskbar area.
 - Hover mode: full opacity and horizontal CPU/RAM/GPU/VRAM/temperature details.
-- Auto-collapses 2 seconds after the mouse leaves.
+- Auto-collapses shortly after the mouse leaves.
 - System tray icon with show/hide, reload config, startup toggle, and exit.
 - Read-only hardware monitoring through `LibreHardwareMonitorLib`.
 
@@ -45,6 +45,7 @@ QuietBar reads `config.json` from the application directory. The file is copied 
   "refreshIntervalMs": 1000,
   "collapsedOpacity": 0.55,
   "expandedOpacity": 1.0,
+  "collapseDelayMs": 800,
   "fontSize": 12,
   "position": "bottom-left",
   "alwaysOnTop": true
@@ -56,6 +57,7 @@ Settings:
 - `refreshIntervalMs`: hardware refresh interval in milliseconds. Minimum normalized value is 250.
 - `collapsedOpacity`: opacity when semi-hidden.
 - `expandedOpacity`: opacity when hovered.
+- `collapseDelayMs`: delay before returning to semi-hidden mode after the mouse leaves.
 - `fontSize`: status text size.
 - `position`: currently supports `bottom-left`.
 - `alwaysOnTop`: keeps QuietBar above normal windows.

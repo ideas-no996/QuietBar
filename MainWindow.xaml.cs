@@ -30,7 +30,6 @@ public partial class MainWindow : Window
         _settings = settings;
 
         _refreshTimer.Tick += (_, _) => RefreshHardwareSnapshot();
-        _collapseTimer.Interval = TimeSpan.FromSeconds(2);
         _collapseTimer.Tick += (_, _) =>
         {
             _collapseTimer.Stop();
@@ -87,6 +86,7 @@ public partial class MainWindow : Window
 
         var interval = Math.Max(250, _settings.RefreshIntervalMs);
         _refreshTimer.Interval = TimeSpan.FromMilliseconds(interval);
+        _collapseTimer.Interval = TimeSpan.FromMilliseconds(_settings.CollapseDelayMs);
 
         CollapsedCpuText.FontSize = _settings.FontSize;
         CollapsedGpuText.FontSize = _settings.FontSize;

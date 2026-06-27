@@ -2,6 +2,7 @@
   "refreshIntervalMs": 1000,
   "collapsedOpacity": 0.55,
   "expandedOpacity": 1.0,
+  "collapseDelayMs": 800,
   "fontSize": 12,
   "position": "bottom-left",
   "alwaysOnTop": true

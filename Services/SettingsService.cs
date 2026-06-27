@@ -48,6 +48,7 @@ public sealed class SettingsService
     private static AppSettings Normalize(AppSettings settings)
     {
         settings.RefreshIntervalMs = Math.Max(250, settings.RefreshIntervalMs);
+        settings.CollapseDelayMs = Math.Clamp(settings.CollapseDelayMs, 200, 5000);
         settings.CollapsedOpacity = Math.Clamp(settings.CollapsedOpacity, 0.1, 1.0);
         settings.ExpandedOpacity = Math.Clamp(settings.ExpandedOpacity, 0.1, 1.0);
         settings.FontSize = Math.Clamp(settings.FontSize, 9, 24);
